@@ -1,13 +1,23 @@
 from uuid import UUID, uuid4
 from datetime import date
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 class User(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     firstName: str
     lastName: str
     birthday: date
+
+    @field_validator("firstName", "lastName")
+    def name_must_not_be_empty_and_letters(cls, v, field):
+    #Check if the string is empty or only whitespace 
+        if not v or v.strip():
+            raise ValueError(f"{field.name} cannot be empty")
+    #Check if all characters are
+        if not v.isalpha():
+            raise ValueError(f"{field.name} must contain only letters")
+        return v
 
 # Singleton UserService
 class UserService:
@@ -46,3 +56,4 @@ class UserService:
 # Dependency injection
 def get_user_service() -> UserService:
     return UserService()
+
