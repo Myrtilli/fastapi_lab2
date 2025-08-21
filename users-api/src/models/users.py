@@ -12,7 +12,7 @@ class User(BaseModel):
     @field_validator("firstName", "lastName")
     def name_must_not_be_empty_and_letters(cls, v, field):
     #Check if the string is empty or only whitespace 
-        if not v or v.strip():
+        if not v or not v.strip():
             raise ValueError(f"{field.name} cannot be empty")
     #Check if all characters are
         if not v.isalpha():

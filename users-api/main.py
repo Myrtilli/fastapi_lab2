@@ -43,11 +43,12 @@ app = FastAPI(
     },
 )
 
-@app.get("/")
+
+@app.get("/", tags=["app"])
 async def read_root():
     return {"message": "FastAPI is running!"}
 
-@app.get("/info")
+@app.get("/info", tags=["app"])
 async def info(settings: Annotated[config.Settings,
 Depends(get_settings)]):
     return {
