@@ -49,9 +49,8 @@ class UserService:
     def delete_user(self, user_id: UUID) -> bool:
         for idx, u in enumerate(self.users):
             if u.id == user_id:
-                del self.users[idx]
-                return True
-        return False
+                return self.users.pop(idx)
+        return None
 
 # Dependency injection
 def get_user_service() -> UserService:
