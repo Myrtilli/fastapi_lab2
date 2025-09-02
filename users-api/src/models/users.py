@@ -9,6 +9,11 @@ class User(BaseModel):
     lastName: str
     birthday: date
 
+class UserIn(BaseModel):
+    firstName: str
+    lastName: str
+    birthday: date
+
     @field_validator("firstName", "lastName")
     def name_must_not_be_empty_and_letters(cls, v, field):
     #Check if the string is empty or only whitespace 
@@ -29,7 +34,8 @@ class UserService:
             cls._instance.users = []  # In-memory storage
         return cls._instance
 
-    def create_user(self, user: User) -> User:
+    def create_user(self, user_in: UserIn) -> User:
+        user = User(**user_in.model_dump())  
         self.users.append(user)
         return user
 
@@ -39,11 +45,12 @@ class UserService:
     def get_user(self, user_id: UUID) -> Optional[User]:
         return next((u for u in self.users if u.id == user_id), None)
 
-    def update_user(self, user_id: UUID, updated_user: User) -> Optional[User]:
+    def update_user(self, user_id: UUID, updated_user: UserIn) -> Optional[User]:
         for idx, u in enumerate(self.users):
             if u.id == user_id:
-                self.users[idx] = updated_user
-                return updated_user
+                user_with_id = User(id=user_id, **updated_user.model_dump()) 
+                self.users[idx] = user_with_id
+                return user_with_id
         return None
 
     def delete_user(self, user_id: UUID) -> bool:
